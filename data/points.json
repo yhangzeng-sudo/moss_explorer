@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1",
+    "name": "YIH Entrance Wall",
+    "description": "A shaded wall near YIH entrance with diverse moss growth",
+    "lat": 1.2966,
+    "lng": 103.7764,
+    "energyCore": 2,
+    "icon": "🌿"
+  },
+  {
+    "id": "2",
+    "name": "UTown Green Drainage",
+    "description": "Moss along drainage lines in UTown",
+    "lat": 1.3047,
+    "lng": 103.7734,
+    "energyCore": 2,
+    "icon": "💧"
+  },
+  {
+    "id": "3",
+    "name": "Central Library Steps",
+    "description": "Moss patches on stone steps",
+    "lat": 1.2963,
+    "lng": 103.7727,
+    "energyCore": 2,
+    "icon": "🪨"
+  }
+]

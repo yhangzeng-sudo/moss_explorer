@@ -1,0 +1,23 @@
+[
+  {
+    "id": "shaded-wall",
+    "name": "Shaded Wall Biome",
+    "requiredEnergy": 5,
+    "description": "Unlock the secrets of moss growing in shaded areas",
+    "thumbnailUrl": "/biomes/shaded-wall.jpg"
+  },
+  {
+    "id": "drainage-line",
+    "name": "Drainage Line Biome",
+    "requiredEnergy": 10,
+    "description": "Explore moss thriving along water drainage systems",
+    "thumbnailUrl": "/biomes/drainage-line.jpg"
+  },
+  {
+    "id": "stone-surface",
+    "name": "Stone Surface Biome",
+    "requiredEnergy": 15,
+    "description": "Discover moss colonies on stone and concrete",
+    "thumbnailUrl": "/biomes/stone-surface.jpg"
+  }
+]
