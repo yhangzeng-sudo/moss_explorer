@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import MossModel from '@/components/MossModel';
 
 interface MossRecord {
   id: string;
@@ -17,12 +18,16 @@ export default function MePage() {
   const [editValue, setEditValue] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLocalhost, setIsLocalhost] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") {
       setLoading(false);
       return;
     }
+    
+    // Check if we're on localhost
+    setIsLocalhost(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
     
     try {
       const stored = localStorage.getItem("mossUploads");
@@ -89,13 +94,36 @@ export default function MePage() {
 
   const mossesWith3D = mosses.filter(m => m.has3D === true);
 
+  // Map moss types to their corresponding image files for Vercel display
+  const getMossImageUrl = (mossType: string, fallbackUrl: string): string => {
+    if (isLocalhost) {
+      // On localhost, return the fallback (won't be used since we show 3D model)
+      return fallbackUrl;
+    }
+    
+    // On Vercel, use type-specific images from the /moss/ directory
+    const mossImageMap: { [key: string]: string } = {
+      "Fern Moss": "/moss/fern moss.jpg",
+      "Star Moss": "/moss/star moss.jpg",
+      "Long Moss": "/moss/long moss.jpg",
+      "Ball Moss": "/moss/ball moss.jpg",
+      "Hair Moss": "/moss/hair moss.jpg",
+      "Rock Moss": "/moss/rock moss.jpg",
+      "Flat Moss": "/moss/flat moss.jpg",
+      "Reindeer Moss": "/moss/redeer moss.jpg",
+    };
+    
+    // Return the mapped image, or fallback to the provided URL, or default to moss example
+    return mossImageMap[mossType] || fallbackUrl || "/moss example.JPG";
+  };
+
   const handleAddTestFernMoss = () => {
     if (typeof window === "undefined") return;
     try {
       const testMoss: MossRecord = {
         id: crypto.randomUUID?.() || Date.now().toString(),
         source: "test",
-        imageUrl: "/moss example.JPG",
+        imageUrl: "/moss/fern moss.jpg", // Use fern moss image for Vercel
         mossType: "Fern Moss",
         has3D: true,
         createdAt: new Date().toISOString()
@@ -180,15 +208,22 @@ export default function MePage() {
                     ×
                   </button>
                   <div className="aspect-square mb-2 bg-[#e8f5ea] rounded-lg overflow-hidden relative">
-                    <img
-                      src={moss.imageUrl || '/moss example.JPG'}
-                      alt={moss.mossType || 'Moss'}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/moss example.JPG';
-                      }}
-                    />
+                    {isLocalhost ? (
+                      <MossModel mossType={moss.mossType} scale={1.5} cameraZ={2.8} height="h-full" />
+                    ) : (
+                      <img
+                        src={getMossImageUrl(moss.mossType, moss.imageUrl)}
+                        alt={moss.mossType || 'Moss'}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          // Fallback to moss example if the specific moss image fails
+                          if (target.src !== window.location.origin + '/moss example.JPG') {
+                            target.src = '/moss example.JPG';
+                          }
+                        }}
+                      />
+                    )}
                   </div>
                   {editingId === moss.id ? (
                     <div className="space-y-1">
