@@ -8,7 +8,7 @@ import * as THREE from "three";
 const MOSS_MODEL_MAP: { [key: string]: string } = {
   "Star Moss": "/models/star moss.glb",
   "Long Moss": "/models/long moss.glb",
-  // Add more mappings as needed
+  "Fern Moss": "/models/moss with stone.glb", // Using default model for Fern Moss (moss model 1 is USDZ, not supported by useGLTF)
 };
 
 // Dynamic scale mapping based on model file names
@@ -17,6 +17,7 @@ const MODEL_SCALE_MAP: { [key: string]: number } = {
   "long moss": 1.0,
   "moss with stone": 1.0,
   "moss model 1": 5.0,
+  "fern moss": 1.0, // Fern Moss uses moss with stone model, same scale
 };
 
 // Function to get scale based on model file path

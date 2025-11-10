@@ -65,21 +65,55 @@ export default function MePage() {
 
   const mossesWith3D = mosses.filter(m => m.has3D === true);
 
+  const handleAddTestFernMoss = () => {
+    if (typeof window === "undefined") return;
+    const testMoss: MossRecord = {
+      id: crypto.randomUUID(),
+      source: "test",
+      imageUrl: "/moss example.JPG",
+      mossType: "Fern Moss",
+      has3D: true,
+      createdAt: new Date().toISOString()
+    };
+    const existing = JSON.parse(localStorage.getItem("mossUploads") || "[]");
+    existing.push(testMoss);
+    localStorage.setItem("mossUploads", JSON.stringify(existing));
+    setMosses(existing);
+  };
+
   return (
     <main className="min-h-screen bg-[#f3f9f4] p-6">
       <div className="bg-white rounded-2xl p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold text-green-900 mb-2">My Digital Moss Garden</h1>
-        <p className="text-sm text-gray-600 mb-4">
-          These are the mosses you uploaded and turned into 3D memories.
-        </p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-green-900 mb-2">My Digital Moss Garden</h1>
+            <p className="text-sm text-gray-600">
+              These are the mosses you uploaded and turned into 3D memories.
+            </p>
+          </div>
+          {mossesWith3D.length === 0 && (
+            <button
+              onClick={handleAddTestFernMoss}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+            >
+              Add Test Fern Moss
+            </button>
+          )}
+        </div>
 
         {mossesWith3D.length === 0 ? (
           <div className="bg-green-50 rounded-2xl p-4 min-h-[360px] flex items-center justify-center">
             <div className="text-center">
               <p className="text-gray-600 mb-2">No 3D moss models yet.</p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 mb-4">
                 Upload a moss and enable 3D model generation to see it here!
               </p>
+              <button
+                onClick={handleAddTestFernMoss}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+              >
+                Or Add Test Fern Moss
+              </button>
             </div>
           </div>
         ) : (
@@ -96,7 +130,7 @@ export default function MePage() {
                     ×
                   </button>
                   <div className="aspect-square mb-2">
-                    <MossModel mossType={moss.mossType} scale={1.4} cameraZ={2.8} height="h-full" />
+                    <MossModel mossType={moss.mossType} scale={1.5} cameraZ={2.8} height="h-full" />
                   </div>
                   {editingId === moss.id ? (
                     <div className="space-y-1">

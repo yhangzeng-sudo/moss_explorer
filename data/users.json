@@ -974,5 +974,21 @@
     "unlockedBiomes": [],
     "claimedPoints": [],
     "createdAt": "2025-11-10T14:18:54.025Z"
+  },
+  {
+    "id": "cc7938c9-ecd6-4cdd-af13-aa9de86c512a",
+    "displayName": "Anonymous Explorer",
+    "energy": 0,
+    "unlockedBiomes": [],
+    "claimedPoints": [],
+    "createdAt": "2025-11-10T16:13:23.993Z"
+  },
+  {
+    "id": "675d6310-550f-4506-bd12-188b6056fbe8",
+    "displayName": "Anonymous Explorer",
+    "energy": 0,
+    "unlockedBiomes": [],
+    "claimedPoints": [],
+    "createdAt": "2025-11-10T16:13:24.172Z"
   }
 ]

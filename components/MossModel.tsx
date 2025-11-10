@@ -9,6 +9,7 @@ import MossMesh from "./MossMesh";
 const MOSS_MODEL_MAP: { [key: string]: string } = {
   "Star Moss": "/models/star moss.glb",
   "Long Moss": "/models/long moss.glb",
+  "Fern Moss": "/models/moss with stone.glb", // Using default model for Fern Moss (moss model 1 is USDZ, not supported by useGLTF)
 };
 
 interface MossModelProps {
