@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { detectMossTypeFromName, fallbackMossType } from '@/lib/moss-detect';
-import MossPreview3D from '@/components/MossPreview3D';
+import MossModel from '@/components/MossModel';
 
 interface SnapshotEditorProps {
   imageUrl: string;
@@ -358,7 +358,7 @@ export default function SnapshotEditor({ imageUrl, onSave, onClose, onUploadToGa
               AI Detection: {detectedMossType} 🌿
             </p>
             <div className="mb-3">
-              <MossPreview3D imageUrl={imageUrl} height="h-48" mossType={detectedMossType} />
+              <MossModel mossType={detectedMossType} scale={1.5} cameraZ={2.8} height="h-48" />
             </div>
           </div>
         )}

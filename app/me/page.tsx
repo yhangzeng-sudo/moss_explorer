@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import MossPreview3D from '@/components/MossPreview3D';
+import MossModel from '@/components/MossModel';
 
 interface MossRecord {
   id: string;
@@ -96,7 +96,7 @@ export default function MePage() {
                     ×
                   </button>
                   <div className="aspect-square mb-2">
-                    <MossPreview3D imageUrl={moss.imageUrl} mossType={moss.mossType} isGardenView={true} height="h-full" />
+                    <MossModel mossType={moss.mossType} scale={1.4} cameraZ={2.8} height="h-full" />
                   </div>
                   {editingId === moss.id ? (
                     <div className="space-y-1">

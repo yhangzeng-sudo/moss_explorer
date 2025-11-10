@@ -1,6 +1,10 @@
+'use client'
+
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
+  const router = useRouter()
   return (
     <main className="min-h-screen bg-gradient-to-b from-green-50 to-white">
       <div className="container mx-auto px-4 py-16">
@@ -48,27 +52,50 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="max-w-4xl mx-auto mt-16 grid md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="text-4xl mb-3">📍</div>
-            <h3 className="font-bold text-lg mb-2">Map Your Discovery</h3>
-            <p className="text-gray-600 text-sm">
-              Pin your moss findings on the interactive campus map
+        <div className="grid gap-6 md:grid-cols-3 mt-10 max-w-4xl mx-auto">
+          {/* 1. Post a Moss */}
+          <div className="bg-white rounded-2xl shadow-sm border border-green-50 p-6 flex flex-col gap-3 hover:shadow-md transition">
+            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-2xl">📸</div>
+            <h3 className="text-lg font-semibold text-green-900">Post a Moss</h3>
+            <p className="text-sm text-gray-600">
+              Upload or snap a moss you found on campus. Our AI will suggest the moss type and create a 3D preview.
             </p>
+            <button
+              onClick={() => router.push("/post")}
+              className="mt-auto inline-flex items-center gap-2 text-sm text-green-700 hover:text-green-900"
+            >
+              Go to Post →
+            </button>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="text-4xl mb-3">⚡</div>
-            <h3 className="font-bold text-lg mb-2">Collect Energy</h3>
-            <p className="text-gray-600 text-sm">
-              Each discovery earns energy to unlock new biomes
+
+          {/* 2. Grow Your Garden */}
+          <div className="bg-white rounded-2xl shadow-sm border border-green-50 p-6 flex flex-col gap-3 hover:shadow-md transition">
+            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-2xl">🌱</div>
+            <h3 className="text-lg font-semibold text-green-900">Grow Your Digital Garden</h3>
+            <p className="text-sm text-gray-600">
+              Every saved moss becomes a 3D memory in your personal garden. Switch between card and garden views.
             </p>
+            <button
+              onClick={() => router.push("/me")}
+              className="mt-auto inline-flex items-center gap-2 text-sm text-green-700 hover:text-green-900"
+            >
+              View My Garden →
+            </button>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="text-4xl mb-3">🌱</div>
-            <h3 className="font-bold text-lg mb-2">Watch It Grow</h3>
-            <p className="text-gray-600 text-sm">
-              Track your moss ecosystem from seed to forest
+
+          {/* 3. Explore the Map */}
+          <div className="bg-white rounded-2xl shadow-sm border border-green-50 p-6 flex flex-col gap-3 hover:shadow-md transition">
+            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-2xl">🗺️</div>
+            <h3 className="text-lg font-semibold text-green-900">Explore the Moss Map</h3>
+            <p className="text-sm text-gray-600">
+              See live discoveries shared by others and explore how moss connects across campus.
             </p>
+            <button
+              onClick={() => router.push("/map")}
+              className="mt-auto inline-flex items-center gap-2 text-sm text-green-700 hover:text-green-900"
+            >
+              Open Map →
+            </button>
           </div>
         </div>
       </div>
