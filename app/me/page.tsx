@@ -103,7 +103,7 @@ export default function MePage() {
     
     // On Vercel, use type-specific images from the /moss/ directory
     const mossImageMap: { [key: string]: string } = {
-      "Fern Moss": "/moss/fern moss.jpg",
+      "Fern Moss": "/moss/moss with stone.jpg", // Updated to use moss with stone image
       "Star Moss": "/moss/star moss.jpg",
       "Long Moss": "/moss/long moss.jpg",
       "Ball Moss": "/moss/ball moss.jpg",
@@ -123,7 +123,7 @@ export default function MePage() {
       const testMoss: MossRecord = {
         id: crypto.randomUUID?.() || Date.now().toString(),
         source: "test",
-        imageUrl: "/moss/fern moss.jpg", // Use fern moss image for Vercel
+        imageUrl: "/moss/moss with stone.jpg", // Use moss with stone image for Vercel
         mossType: "Fern Moss",
         has3D: true,
         createdAt: new Date().toISOString()
