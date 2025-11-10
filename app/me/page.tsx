@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 
 interface MossRecord {
   id: string;
@@ -16,21 +15,42 @@ export default function MePage() {
   const [mosses, setMosses] = useState<MossRecord[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = JSON.parse(localStorage.getItem("mossUploads") || "[]");
-    setMosses(stored);
+    if (typeof window === "undefined") {
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      const stored = localStorage.getItem("mossUploads");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setMosses(Array.isArray(parsed) ? parsed : []);
+      }
+    } catch (err) {
+      console.error('Error loading mosses from localStorage:', err);
+      setError('Failed to load moss garden');
+      setMosses([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const updateMossInLocalStorage = (id: string, updates: Partial<MossRecord>) => {
     if (typeof window === "undefined") return;
-    const stored = JSON.parse(localStorage.getItem("mossUploads") || "[]");
-    const updated = stored.map((m: MossRecord) => 
-      m.id === id ? { ...m, ...updates } : m
-    );
-    localStorage.setItem("mossUploads", JSON.stringify(updated));
-    setMosses(updated);
+    try {
+      const stored = JSON.parse(localStorage.getItem("mossUploads") || "[]");
+      const updated = stored.map((m: MossRecord) => 
+        m.id === id ? { ...m, ...updates } : m
+      );
+      localStorage.setItem("mossUploads", JSON.stringify(updated));
+      setMosses(updated);
+    } catch (err) {
+      console.error('Error updating moss:', err);
+    }
   };
 
   const handleStartEdit = (moss: MossRecord) => {
@@ -57,29 +77,53 @@ export default function MePage() {
     }
 
     if (typeof window === "undefined") return;
-    const stored = JSON.parse(localStorage.getItem("mossUploads") || "[]");
-    const updated = stored.filter((m: MossRecord) => m.id !== id);
-    localStorage.setItem("mossUploads", JSON.stringify(updated));
-    setMosses(updated);
+    try {
+      const stored = JSON.parse(localStorage.getItem("mossUploads") || "[]");
+      const updated = stored.filter((m: MossRecord) => m.id !== id);
+      localStorage.setItem("mossUploads", JSON.stringify(updated));
+      setMosses(updated);
+    } catch (err) {
+      console.error('Error deleting moss:', err);
+    }
   };
 
   const mossesWith3D = mosses.filter(m => m.has3D === true);
 
   const handleAddTestFernMoss = () => {
     if (typeof window === "undefined") return;
-    const testMoss: MossRecord = {
-      id: crypto.randomUUID(),
-      source: "test",
-      imageUrl: "/moss example.JPG",
-      mossType: "Fern Moss",
-      has3D: true,
-      createdAt: new Date().toISOString()
-    };
-    const existing = JSON.parse(localStorage.getItem("mossUploads") || "[]");
-    existing.push(testMoss);
-    localStorage.setItem("mossUploads", JSON.stringify(existing));
-    setMosses(existing);
+    try {
+      const testMoss: MossRecord = {
+        id: crypto.randomUUID?.() || Date.now().toString(),
+        source: "test",
+        imageUrl: "/moss example.JPG",
+        mossType: "Fern Moss",
+        has3D: true,
+        createdAt: new Date().toISOString()
+      };
+      const stored = localStorage.getItem("mossUploads");
+      const existing = stored ? JSON.parse(stored) : [];
+      if (Array.isArray(existing)) {
+        existing.push(testMoss);
+        localStorage.setItem("mossUploads", JSON.stringify(existing));
+        setMosses(existing);
+      }
+    } catch (err) {
+      console.error('Error adding test moss:', err);
+      setError('Failed to add test moss');
+    }
   };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#f3f9f4] p-6">
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="text-center py-8">
+            <p className="text-gray-600">Loading your garden...</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#f3f9f4] p-6">
@@ -100,6 +144,12 @@ export default function MePage() {
             </button>
           )}
         </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            {error}
+          </div>
+        )}
 
         {mossesWith3D.length === 0 ? (
           <div className="bg-green-50 rounded-2xl p-4 min-h-[360px] flex items-center justify-center">
@@ -130,12 +180,14 @@ export default function MePage() {
                     ×
                   </button>
                   <div className="aspect-square mb-2 bg-[#e8f5ea] rounded-lg overflow-hidden relative">
-                    <Image
-                      src={moss.imageUrl}
-                      alt={moss.mossType}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                    <img
+                      src={moss.imageUrl || '/moss example.JPG'}
+                      alt={moss.mossType || 'Moss'}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/moss example.JPG';
+                      }}
                     />
                   </div>
                   {editingId === moss.id ? (
@@ -178,7 +230,7 @@ export default function MePage() {
                         {moss.mossType}
                       </p>
                       <p className="text-xs text-gray-400">
-                        {new Date(moss.createdAt).toLocaleDateString()}
+                        {moss.createdAt ? new Date(moss.createdAt).toLocaleDateString() : 'No date'}
                       </p>
                     </div>
                   )}
