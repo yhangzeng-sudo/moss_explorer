@@ -96,25 +96,28 @@ export default function MePage() {
 
   // Map moss types to their corresponding image files for Vercel display
   const getMossImageUrl = (mossType: string, fallbackUrl: string): string => {
-    if (isLocalhost) {
-      // On localhost, return the fallback (won't be used since we show 3D model)
-      return fallbackUrl;
+    // Always prioritize the mapping when not on localhost (i.e., on Vercel)
+    if (!isLocalhost) {
+      // On Vercel, use type-specific images from the /moss/ directory
+      const mossImageMap: { [key: string]: string } = {
+        "Fern Moss": "/moss/moss with stone.jpg", // Use moss with stone image for Fern Moss
+        "Star Moss": "/moss/star moss.jpg",
+        "Long Moss": "/moss/long moss.jpg",
+        "Ball Moss": "/moss/ball moss.jpg",
+        "Hair Moss": "/moss/hair moss.jpg",
+        "Rock Moss": "/moss/rock moss.jpg",
+        "Flat Moss": "/moss/flat moss.jpg",
+        "Reindeer Moss": "/moss/redeer moss.jpg",
+      };
+      
+      // Always use the mapped image if it exists, regardless of fallbackUrl
+      if (mossImageMap[mossType]) {
+        return mossImageMap[mossType];
+      }
     }
     
-    // On Vercel, use type-specific images from the /moss/ directory
-    const mossImageMap: { [key: string]: string } = {
-      "Fern Moss": "/moss/moss with stone.jpg", // Updated to use moss with stone image
-      "Star Moss": "/moss/star moss.jpg",
-      "Long Moss": "/moss/long moss.jpg",
-      "Ball Moss": "/moss/ball moss.jpg",
-      "Hair Moss": "/moss/hair moss.jpg",
-      "Rock Moss": "/moss/rock moss.jpg",
-      "Flat Moss": "/moss/flat moss.jpg",
-      "Reindeer Moss": "/moss/redeer moss.jpg",
-    };
-    
-    // Return the mapped image, or fallback to the provided URL, or default to moss example
-    return mossImageMap[mossType] || fallbackUrl || "/moss example.JPG";
+    // On localhost or if no mapping exists, return the fallback (won't be used on localhost since we show 3D model)
+    return fallbackUrl || "/moss example.JPG";
   };
 
   const handleAddTestFernMoss = () => {
@@ -215,12 +218,18 @@ export default function MePage() {
                         src={getMossImageUrl(moss.mossType, moss.imageUrl)}
                         alt={moss.mossType || 'Moss'}
                         className="w-full h-full object-cover"
+                        loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
+                          console.error('Failed to load image:', target.src);
                           // Fallback to moss example if the specific moss image fails
-                          if (target.src !== window.location.origin + '/moss example.JPG') {
-                            target.src = '/moss example.JPG';
+                          const fallback = '/moss example.JPG';
+                          if (!target.src.includes('moss example.JPG')) {
+                            target.src = fallback;
                           }
+                        }}
+                        onLoad={() => {
+                          console.log('Successfully loaded image for:', moss.mossType);
                         }}
                       />
                     )}
