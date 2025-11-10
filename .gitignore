@@ -37,7 +37,5 @@ next-env.d.ts
 # uploads
 /public/uploads
 
-# Large 3D model files (too large for GitHub, use external storage)
-/public/models/*.glb
-/public/models/*.usdz
+# Large 3D model files are tracked with Git LFS (see .gitattributes)
 
