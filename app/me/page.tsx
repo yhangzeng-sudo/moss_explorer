@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import MossModel from '@/components/MossModel';
+import Image from 'next/image';
 
 interface MossRecord {
   id: string;
@@ -129,8 +129,14 @@ export default function MePage() {
                   >
                     ×
                   </button>
-                  <div className="aspect-square mb-2">
-                    <MossModel mossType={moss.mossType} scale={1.5} cameraZ={2.8} height="h-full" />
+                  <div className="aspect-square mb-2 bg-[#e8f5ea] rounded-lg overflow-hidden relative">
+                    <Image
+                      src={moss.imageUrl}
+                      alt={moss.mossType}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                    />
                   </div>
                   {editingId === moss.id ? (
                     <div className="space-y-1">
