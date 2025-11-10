@@ -20,9 +20,17 @@ export default function SnapshotEditor({ imageUrl, onSave, onClose, onUploadToGa
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [detectedMossType, setDetectedMossType] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
+  const [isLocalhost, setIsLocalhost] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Check if we're on localhost
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsLocalhost(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    }
+  }, []);
 
   // Reset image state when imageUrl changes
   useEffect(() => {
@@ -279,20 +287,31 @@ export default function SnapshotEditor({ imageUrl, onSave, onClose, onUploadToGa
               className={`w-full h-auto relative ${imageLoaded ? 'block' : 'hidden'}`}
               style={{ zIndex: 1 }}
               onLoad={() => {
-                setImageLoaded(true);
-                setImageError(false);
-                if (imageRef.current && canvasRef.current) {
-                  canvasRef.current.width = imageRef.current.naturalWidth || imageRef.current.width;
-                  canvasRef.current.height = imageRef.current.naturalHeight || imageRef.current.height;
-                }
-                // Check if this is the moss example image - identify as Fern Moss
-                if (imageUrl.includes('moss example') || imageUrl.includes('moss example.JPG')) {
-                  setDetectedMossType('Fern Moss');
-                } else {
-                  // Detect moss type when image loads
-                  const nameToDetect = snapshotName || 'moss discovery';
-                  const detected = detectMossTypeFromName(nameToDetect) || fallbackMossType();
-                  setDetectedMossType(detected);
+                try {
+                  setImageLoaded(true);
+                  setImageError(false);
+                  if (imageRef.current && canvasRef.current) {
+                    canvasRef.current.width = imageRef.current.naturalWidth || imageRef.current.width;
+                    canvasRef.current.height = imageRef.current.naturalHeight || imageRef.current.height;
+                  }
+                  // Check if this is the moss example image - identify as Fern Moss
+                  if (imageUrl.includes('moss example') || imageUrl.includes('moss example.JPG')) {
+                    setDetectedMossType('Fern Moss');
+                  } else {
+                    // Detect moss type when image loads
+                    const nameToDetect = snapshotName || 'moss discovery';
+                    try {
+                      const detected = detectMossTypeFromName(nameToDetect) || fallbackMossType();
+                      setDetectedMossType(detected);
+                    } catch (detectError) {
+                      console.error('Error detecting moss type:', detectError);
+                      setDetectedMossType(fallbackMossType());
+                    }
+                  }
+                } catch (error) {
+                  console.error('Error in image onLoad handler:', error);
+                  setImageError(true);
+                  setErrorMessage('Failed to process image');
                 }
               }}
               onError={(e) => {
@@ -351,8 +370,8 @@ export default function SnapshotEditor({ imageUrl, onSave, onClose, onUploadToGa
           ))}
         </div>
 
-        {/* 3D Preview and Moss Detection */}
-        {imageLoaded && detectedMossType && (
+        {/* 3D Preview and Moss Detection - Only show on localhost */}
+        {imageLoaded && detectedMossType && isLocalhost && (
           <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
             <p className="text-sm font-medium text-green-800 mb-3">
               AI Detection: {detectedMossType} 🌿
@@ -360,6 +379,14 @@ export default function SnapshotEditor({ imageUrl, onSave, onClose, onUploadToGa
             <div className="mb-3">
               <MossModel mossType={detectedMossType} scale={1.5} cameraZ={2.8} height="h-48" />
             </div>
+          </div>
+        )}
+        {/* Moss Detection Info (text only on Vercel) */}
+        {imageLoaded && detectedMossType && !isLocalhost && (
+          <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-sm font-medium text-green-800">
+              AI Detection: {detectedMossType} 🌿
+            </p>
           </div>
         )}
 
